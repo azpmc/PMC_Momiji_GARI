@@ -23,11 +23,23 @@ public class PlayerController : MonoBehaviour {
     float FlashingNextTime;//点滅に使用、次の点滅までの時間
     Vector3 MoveP;//移動量
 
+    Vector3 TargetPos;
+    Vector3 StartPos;
+    float StartTime;
+    bool SpeedChange;
 
     //レンダラーの情報を入れるための配列
     MeshRenderer[] PlayerMesh;
     SkinnedMeshRenderer[] PlayerSkinMesh;
-    
+
+
+    enum PLAYER_SPEED
+    {
+        PLAYER_SPEED_DEF =0,
+        PLAYER_SPEED_MIN,
+        PLAYER_SPEED_MAX,
+    };
+    PLAYER_SPEED PlayerSpeedStatus;
 
 
     // Use this for initialization
@@ -89,10 +101,24 @@ public class PlayerController : MonoBehaviour {
                 {
                     //走るアニメ再生
                     animator.SetFloat("Speed", 1.0f);
-                    
+
                     //移動量計算
-                    MoveP.z = 10 * Time.deltaTime;
-                    MoveP.z += PlayerSpeed * Time.deltaTime;
+                    //    MoveP.z = 10 * Time.deltaTime;
+                    //   MoveP.z += PlayerSpeed * Time.deltaTime;
+
+                    if (SpeedChange)
+                    {
+                        float diff = Time.timeSinceLevelLoad - StartTime;
+                        if (diff > 1)
+                        {
+                            //補完完了してる場合は最終座標を代入
+                            transform.position = TargetPos;
+                            SpeedChange = false;
+                        }
+                        float rate = diff / 1;
+
+                        transform.position = Vector3.Lerp(StartPos, TargetPos, rate);
+                    }
 
                     MoveP.y -= Gravity * Time.deltaTime;//重力加算
 
@@ -166,6 +192,8 @@ public class PlayerController : MonoBehaviour {
         }
 
             MoveP = Vector3.zero;
+
+       Vector3 pos = transform.position;
     }
 
 
@@ -199,29 +227,41 @@ public class PlayerController : MonoBehaviour {
 
     public void SpeedUp()
     {
-
-        if ((int)PlayerSpeed == (int)DefaultPlayerSpeed)
+        if (PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_DEF)
         {
-            PlayerSpeed = MaxSpeed;
+            TargetPos = new Vector3(5, transform.position.y, transform.position.z);
+            StartPos = transform.position;
+            StartTime = Time.time;
+            SpeedChange = true;
+            PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_MAX;
         }
-
-        if ( (int)PlayerSpeed == (int)MinSpeed)
+        else if ( PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_MIN)
         {
-            PlayerSpeed = DefaultPlayerSpeed;
+            TargetPos = new Vector3(0, transform.position.y, transform.position.z);
+            StartPos = transform.position;
+            StartTime = Time.time;
+            SpeedChange = true;
+            PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_DEF;
         }
-      
-
     }
 
     public void SpeedDown()
     {
-        if ((int)PlayerSpeed == (int)DefaultPlayerSpeed)
+        if (PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_MAX)
         {
-            PlayerSpeed = MinSpeed;
+            TargetPos = new Vector3(0, transform.position.y, transform.position.z);
+            StartPos = transform.position;
+            StartTime = Time.time;
+            SpeedChange = true;
+            PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_DEF;
         }
-        if ((int)PlayerSpeed == (int)MaxSpeed)
+        else if ( PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_DEF)
         {
-            PlayerSpeed = DefaultPlayerSpeed;
+            TargetPos = new Vector3(-5, transform.position.y, transform.position.z);
+            StartPos = transform.position;
+            StartTime = Time.time;
+            SpeedChange = true;
+            PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_MIN;
         }
     }
 
@@ -240,4 +280,15 @@ public class PlayerController : MonoBehaviour {
         return bStart;
     }
 
+    public float GetPlayerSpeed()
+    {
+        if (bStart)
+        {
+            return PlayerSpeed;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }

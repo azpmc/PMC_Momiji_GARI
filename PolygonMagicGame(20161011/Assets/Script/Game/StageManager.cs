@@ -7,91 +7,8 @@ using System.Collections.Generic;
 
 public class StageManager : MonoBehaviour {
 
-    /* const int StageTipSize = 80;
-     int currentTipIndex;
-
-     public Transform character;//ターゲットキャラクタの設定
-     public GameObject[] stageTips;//ステージチップのプレファブを収納する配列
-     public int startTipIndex;//自動生成開始インデックス
-     public int preInstantiate;//生成先読み個数
-     public List<GameObject> generatedStageList = new List<GameObject>();//生成済みステージチップ保持リスト
-
-     Quaternion qua;
-
-     // Use this for initialization
-     void Start()
-     {
-         qua = stageTips[0].transform.rotation;
-
-         currentTipIndex = startTipIndex - 1;
-         UpdateStage(preInstantiate);
-     }
-
-     // Update is called once per frame
-     void Update()
-     {
-
-         //キャラクターの位置から現在のステージチップのインデックスを計算する
-         int charapositionIndex = (int)(character.position.x / StageTipSize);
-
-         //次のステージチップに入ったらステージの更新処理を行う
-         if (charapositionIndex + preInstantiate > currentTipIndex)
-         {
-             UpdateStage(charapositionIndex + preInstantiate);
-         }
-     }
-
-     //指定Indexまでのステージチップを生成して管理下におく
-     void UpdateStage(int toTipIndex)
-     {
-         if (toTipIndex <= currentTipIndex)
-             return;
-
-
-         //指定のステージチップまで作成
-         for (int i = currentTipIndex + 1; i <= toTipIndex; i++)
-         {
-             GameObject stageObject = GenerateStage(i);
-
-             generatedStageList.Add(stageObject);
-
-
-         }
-
-         //ステージ保持上限内になるまで古いステージを削除
-         while (generatedStageList.Count > preInstantiate + 2)
-         {
-             DestroyOldestStage();
-         }
-
-         currentTipIndex = toTipIndex;
-
-     }
-
-
-     //指定のインデックス位置にStageオブジェクトをランダムに生成
-     GameObject GenerateStage(int tipIndex)
-     {
-         int nextStageTip = Random.Range(0, stageTips.Length);
-
-         GameObject stageObject = (GameObject)Instantiate(stageTips[nextStageTip], new Vector3(tipIndex*StageTipSize, 0, 0),qua);
-         return stageObject;
-     }
-
-
-     //一番古いステージを削除
-     void DestroyOldestStage()
-     {
-         GameObject oldStage = generatedStageList[0];
-
-          generatedStageList.RemoveAt(0);
-         Destroy(oldStage);
-     }
-
-     */
 
     const int StageTipSize = 80;
-    int currentTipIndex;
 
     public Transform character;//ターゲットキャラクタの設定
     public GameObject[] stageTips;//ステージチップのプレファブを収納する配列
@@ -99,76 +16,161 @@ public class StageManager : MonoBehaviour {
     public int preInstantiate;//生成先読み個数
     public List<GameObject> generatedStageList = new List<GameObject>();//生成済みステージチップ保持リスト
 
+
+    GameObject player;
     Quaternion qua;
 
-    // Use this for initialization
     void Start()
     {
-       qua =  stageTips[0].transform.rotation;
+        qua = stageTips[0].transform.rotation;
+        player = GameObject.Find("Player");
 
-        currentTipIndex = startTipIndex - 1;
-        UpdateStage(preInstantiate);
+        for( int i = 0; i < preInstantiate; i++)
+        {
+            generatedStageList[i] = Instantiate(stageTips[Random.Range(0, stageTips.Length)]);
+            generatedStageList[i].transform.position = new Vector3(transform.position.x + (StageTipSize*i), transform.position.y, transform.position.z);
+        }
+
     }
 
-    // Update is called once per frame
     void Update()
     {
-
-        //キャラクターの位置から現在のステージチップのインデックスを計算する
-        int charapositionIndex = (int)(character.position.x / StageTipSize);
-
-        //次のステージチップに入ったらステージの更新処理を行う
-        if (charapositionIndex + preInstantiate > currentTipIndex)
+        if (generatedStageList.Count != 0)
         {
-            UpdateStage(charapositionIndex + preInstantiate);
+          
+            for (int i = 0; i < generatedStageList.Count; i++)
+            {
+                if (generatedStageList[i] != null)
+                {
+                    Vector3 pos = generatedStageList[i].transform.position;
+                    generatedStageList[i].transform.position = new Vector3(pos.x - (player.GetComponent<PlayerController>().GetPlayerSpeed()*Time.deltaTime), pos.y, pos.z);
+                }
+
+            }
+
+
+            if (generatedStageList[0].transform.position.x < -StageTipSize)
+            {
+                if (generatedStageList[0] != null)
+                {
+                    Destroy(generatedStageList[0]);
+                    generatedStageList.RemoveAt(0);
+
+                    GameObject stage = Instantiate(stageTips[Random.Range(0, stageTips.Length)]);
+                    stage.transform.position = new Vector3(generatedStageList[1].transform.position.x + (StageTipSize), transform.position.y, transform.position.z);
+
+                    generatedStageList.Add(stage);
+
+                    // generatedStageList[i].transform.position = new Vector3(transform.position.x + (StageTipSize * i), transform.position.y, transform.position.z);
+                }
+            }
+
+
         }
     }
 
-    //指定Indexまでのステージチップを生成して管理下におく
-    void UpdateStage(int toTipIndex)
-    {
-        if (toTipIndex <= currentTipIndex)
-            return;
+
+    /*
+        int currentTipIndex;
+
+        public Transform character;//ターゲットキャラクタの設定
+        public GameObject[] stageTips;//ステージチップのプレファブを収納する配列
+        public int startTipIndex;//自動生成開始インデックス
+        public int preInstantiate;//生成先読み個数
+        public List<GameObject> generatedStageList = new List<GameObject>();//生成済みステージチップ保持リスト
 
 
-        //指定のステージチップまで作成
-        for (int i = currentTipIndex + 1; i <= toTipIndex; i++)
+        GameObject player;
+        Quaternion qua;
+
+        // Use this for initialization
+        void Start()
         {
-            GameObject stageObject = GenerateStage(i);
+           qua =  stageTips[0].transform.rotation;
 
-            generatedStageList.Add(stageObject);
+            currentTipIndex = startTipIndex - 1;
+            UpdateStage(preInstantiate);
+
+            player = GameObject.Find("Player");
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+            transform.position = player.transform.position;
+
+            //キャラクターの位置から現在のステージチップのインデックスを計算する
+            int charapositionIndex = (int)(transform.position.x / StageTipSize);
+
+            //次のステージチップに入ったらステージの更新処理を行う
+            if (charapositionIndex + preInstantiate > currentTipIndex)
+            {
+                UpdateStage(charapositionIndex + preInstantiate);
+            }
+
+            if(Input.GetKeyDown(KeyCode.A))
+            {
+                StageRegenerate();
+            }
 
 
         }
 
-        //ステージ保持上限内になるまで古いステージを削除
-        while (generatedStageList.Count > preInstantiate + 2)
+        //指定Indexまでのステージチップを生成して管理下におく
+        void UpdateStage(int toTipIndex)
         {
-            DestroyOldestStage();
+            if (toTipIndex <= currentTipIndex)
+                return;
+
+
+            //指定のステージチップまで作成
+            for (int i = currentTipIndex + 1; i <= toTipIndex; i++)
+            {
+                GameObject stageObject = GenerateStage(i);
+
+                generatedStageList.Add(stageObject);
+
+
+            }
+
+            //ステージ保持上限内になるまで古いステージを削除
+            while (generatedStageList.Count > preInstantiate + 2)
+            {
+                DestroyOldestStage();
+            }
+
+            currentTipIndex = toTipIndex;
+
         }
 
-        currentTipIndex = toTipIndex;
 
-    }
+        //指定のインデックス位置にStageオブジェクトをランダムに生成
+        GameObject GenerateStage(int tipIndex)
+        {
+            int nextStageTip = Random.Range(0, stageTips.Length);
 
-
-    //指定のインデックス位置にStageオブジェクトをランダムに生成
-    GameObject GenerateStage(int tipIndex)
-    {
-        int nextStageTip = Random.Range(0, stageTips.Length);
-
-        GameObject stageObject = (GameObject)Instantiate(stageTips[nextStageTip], new Vector3(tipIndex * StageTipSize, 0, 0),qua);
-        return stageObject;
-    }
+            GameObject stageObject = (GameObject)Instantiate(stageTips[nextStageTip], new Vector3(tipIndex * StageTipSize, 0, 0),qua);
+            return stageObject;
+        }
 
 
-    //一番古いステージを削除
-    void DestroyOldestStage()
-    {
-        Destroy(generatedStageList[0]);
-        generatedStageList.RemoveAt(0);
-       
-    }
+        //一番古いステージを削除
+        void DestroyOldestStage()
+        {
+            Destroy(generatedStageList[0]);
+            generatedStageList.RemoveAt(0);
+
+        }
+
+        void StageRegenerate()
+        {
+
+          //  charapositionIndex = (int)(0.0f / StageTipSize);
+            currentTipIndex = startTipIndex - 1;
+            UpdateStage(preInstantiate);
+
+        }*/
 
 
 }

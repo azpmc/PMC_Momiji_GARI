@@ -6,6 +6,11 @@ public class GameSystem : MonoBehaviour {
     GameObject life;
     GameObject fade;
     GameObject PauseMenu;
+
+    GameObject Player;
+    GameObject Camera;
+    GameObject StageGenerater;
+
     bool fadestart;
 
 	// Use this for initialization
@@ -15,6 +20,11 @@ public class GameSystem : MonoBehaviour {
         PauseMenu = GameObject.Find("PausePanel");
         fadestart = false;
         PauseMenu.SetActive(false);
+
+        Player = GameObject.Find("Player");
+        Camera = GameObject.Find("Main Camera");
+
+
     }
 	
 	// Update is called once per frame
