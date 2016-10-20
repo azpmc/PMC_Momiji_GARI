@@ -5,7 +5,7 @@ public class GameSystem : MonoBehaviour {
 
     GameObject life;
     GameObject fade;
-    GameObject PauseMenu;
+    public GameObject  PauseMenu;
 
     GameObject Player;
     GameObject Camera;
@@ -17,7 +17,7 @@ public class GameSystem : MonoBehaviour {
 	void Start () {
         life = GameObject.Find("PlayerLife");
         fade = GameObject.Find("Fade");
-        PauseMenu = GameObject.Find("PausePanel");
+        
         fadestart = false;
         PauseMenu.SetActive(false);
 

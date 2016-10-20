@@ -15,7 +15,7 @@ public class StageManager : MonoBehaviour {
     public int startTipIndex;//自動生成開始インデックス
     public int preInstantiate;//生成先読み個数
     public List<GameObject> generatedStageList = new List<GameObject>();//生成済みステージチップ保持リスト
-
+    float distance;//スコアとして使用
 
     GameObject player;
     Quaternion qua;
@@ -31,22 +31,28 @@ public class StageManager : MonoBehaviour {
             generatedStageList[i].transform.position = new Vector3(transform.position.x + (StageTipSize*i), transform.position.y, transform.position.z);
         }
 
+        distance = 0;
     }
 
     void Update()
     {
         if (generatedStageList.Count != 0)
         {
-          
-            for (int i = 0; i < generatedStageList.Count; i++)
-            {
-                if (generatedStageList[i] != null)
-                {
-                    Vector3 pos = generatedStageList[i].transform.position;
-                    generatedStageList[i].transform.position = new Vector3(pos.x - (player.GetComponent<PlayerController>().GetPlayerSpeed()*Time.deltaTime), pos.y, pos.z);
-                }
 
+            if (!player.GetComponent<PlayerController>().GetStunFlg())
+            {
+                for (int i = 0; i < generatedStageList.Count; i++)
+                {
+                    if (generatedStageList[i] != null)
+                    {
+                        Vector3 pos = generatedStageList[i].transform.position;
+                        generatedStageList[i].transform.position = new Vector3(pos.x - (player.GetComponent<PlayerController>().GetPlayerSpeed() * Time.deltaTime), pos.y, pos.z);
+                    }
+
+                }
             }
+
+            distance += player.GetComponent<PlayerController>().GetPlayerSpeed() * Time.deltaTime;
 
 
             if (generatedStageList[0].transform.position.x < -StageTipSize)
@@ -67,6 +73,13 @@ public class StageManager : MonoBehaviour {
 
 
         }
+
+       
+    }
+
+    public float GetDistance()
+    {
+        return distance;
     }
 
 

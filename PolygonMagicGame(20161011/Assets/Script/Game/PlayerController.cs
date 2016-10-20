@@ -198,32 +198,38 @@ public class PlayerController : MonoBehaviour {
 
 
     //コライダーの接触判定
-    void OnControllerColliderHit(ControllerColliderHit hit)
-    {        
-        //敵オブジェクトの場合
-        if(hit.gameObject.tag == "EnemyObject")
-        {
-            //スタン経過時間初期化
-            time = 0.0f;
-            //点滅の次の時間を設定
-            FlashingNextTime = Time.time;
-            //歩くアニメーション停止
-            animator.SetFloat("Speed", 0.0f);
-            //スタンフラグTrue
-            bPlayerStun = true;
-
+    void OnTriggerEnter(Collider col)
+    {
+        
+     
+            if (col.tag == "EnemyObject")
+            {
+                
+                //スタン経過時間初期化
+                time = 0.0f;
+                //点滅の次の時間を設定
+                FlashingNextTime = Time.time;
+                //歩くアニメーション停止
+                animator.SetFloat("Speed", 0.0f);
+                //スタンフラグTrue
+                bPlayerStun = true;
+            SpeedChange = false;
             //ライフダウン
             Life.GetComponent<PlayerLife>().PlayerLifeDown();
-            //Hitしたオブジェクトの削除
-            Destroy(hit.gameObject);
-        }
+                //Hitしたオブジェクトの削除
+                Destroy(col.gameObject);
+            }
+        
 
     }
 
 
 
 
-
+    public bool GetStunFlg()
+    {
+        return bPlayerStun;
+    }
 
     public void SpeedUp()
     {
