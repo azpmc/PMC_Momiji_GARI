@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ScoreSystem : MonoBehaviour {
 
-    const string HIGH_SCORE_KEY = "highscore";
+    public const string HIGH_SCORE_KEY = "highscore";
     int score;
     void Start()
     {

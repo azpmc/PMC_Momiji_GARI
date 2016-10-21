@@ -85,6 +85,7 @@
     <Compile Include="Assets\Script\Game\StageManager.cs" />
     <Compile Include="Assets\Script\Game\StartText.cs" />
     <Compile Include="Assets\Script\Game\Timer.cs" />
+    <Compile Include="Assets\Script\Game\hScore.cs" />
     <Compile Include="Assets\Script\Result\HighScore.cs" />
     <Compile Include="Assets\Script\Result\ResultScore.cs" />
     <Compile Include="Assets\Script\Result\ResultTime.cs" />
