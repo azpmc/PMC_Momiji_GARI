@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonMagicGame(20161011.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonMagicGame(20161011.CSharp", "PolygonMagicGame(20161011.CSharp.csproj", "{86623419-5F8E-DB80-D442-981C0A53050E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonMagicGame(20161011.CSharp.Editor", "PolygonMagicGame(20161011.CSharp.Editor.csproj", "{B650994D-8221-2831-4223-1965678DC117}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{86623419-5F8E-DB80-D442-981C0A53050E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86623419-5F8E-DB80-D442-981C0A53050E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86623419-5F8E-DB80-D442-981C0A53050E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B650994D-8221-2831-4223-1965678DC117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B650994D-8221-2831-4223-1965678DC117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B650994D-8221-2831-4223-1965678DC117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B650994D-8221-2831-4223-1965678DC117}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -27,8 +27,16 @@ public class StageManager : MonoBehaviour {
 
         for( int i = 0; i < preInstantiate; i++)
         {
-            generatedStageList[i] = Instantiate(stageTips[Random.Range(0, stageTips.Length)]);
-            generatedStageList[i].transform.position = new Vector3(transform.position.x + (StageTipSize*i), transform.position.y, transform.position.z);
+            if (i == 0)
+            {
+                generatedStageList[i] = Instantiate(stageTips[0]);
+                generatedStageList[i].transform.position = new Vector3(transform.position.x + (StageTipSize * i), transform.position.y, transform.position.z);
+            }
+            else
+            {
+                generatedStageList[i] = Instantiate(stageTips[Random.Range(0, stageTips.Length)]);
+                generatedStageList[i].transform.position = new Vector3(transform.position.x + (StageTipSize * i), transform.position.y, transform.position.z);
+            }
         }
 
         distance = 0;

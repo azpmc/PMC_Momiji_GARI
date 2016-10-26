@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class PlayerLife : MonoBehaviour {
 
+    public GameObject[] lifes;
     public int Life;
     int MaxLife;
     Text text;
@@ -35,7 +36,12 @@ public class PlayerLife : MonoBehaviour {
     {
         if( Life >= 1)
         {
+            lifes[Life-1].SetActive(false);
             Life--;
+            for (int i = 0; i < Life; i++)
+            {
+                lifes[i].SetActive(true);
+            }
         
         }
  
@@ -46,7 +52,11 @@ public class PlayerLife : MonoBehaviour {
         if( Life <  MaxLife)
         {
             Life++;
-          
+            for (int i = 0; i < Life; i++)
+            {
+                lifes[i].SetActive(true);
+            }
+
         }
        
     }

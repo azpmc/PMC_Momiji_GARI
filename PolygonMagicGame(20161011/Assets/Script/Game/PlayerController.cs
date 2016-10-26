@@ -108,24 +108,26 @@ public class PlayerController : MonoBehaviour {
 
                     if (SpeedChange)
                     {
-                        float diff = Time.timeSinceLevelLoad - StartTime;
-                        if (diff > 1)
+                        float diff = Time.time - StartTime;
+                        if (diff > 0.4f)
                         {
                             //補完完了してる場合は最終座標を代入
                             transform.position = TargetPos;
                             SpeedChange = false;
                         }
-                        float rate = diff / 1;
+                        float rate = diff / 0.4f;
 
                         transform.position = Vector3.Lerp(StartPos, TargetPos, rate);
                     }
 
-                    MoveP.y -= Gravity * Time.deltaTime;//重力加算
+                      MoveP.y -= Gravity * Time.deltaTime;//重力加算
+                    
 
-
-
-                    Vector3 globalDirection = transform.TransformDirection(MoveP);//移動ベクトルをグローバルなベクトルに変換
+                    Vector3 mmm = MoveP ;
+                    mmm.y = mmm.y * 0.1f;
+                    Vector3 globalDirection = transform.TransformDirection(mmm);//移動ベクトルをグローバルなベクトルに変換
                     Controller.Move(globalDirection);// * Time.deltaTime);
+                 
                 }
                 else
                 {
@@ -189,9 +191,23 @@ public class PlayerController : MonoBehaviour {
            //ライフがない
            //アニメーションOFF
             animator.SetFloat("Speed", 0.0f);
+            //爆発しろ
+            transform.FindChild("Explosion").gameObject.SetActive(true);
+            //プレイヤーを描画しない
+            for (int i = 0; i < PlayerMesh.Length; i++)
+            {
+                PlayerMesh[i].enabled = false;
+            }
+            for (int i = 0; i < PlayerSkinMesh.Length; i++)
+            {
+                PlayerSkinMesh[i].enabled = false;
+            }
+
+            
+
         }
 
-            MoveP = Vector3.zero;
+           // MoveP = Vector3.zero;
 
        Vector3 pos = transform.position;
     }
@@ -204,18 +220,8 @@ public class PlayerController : MonoBehaviour {
      
             if (col.tag == "EnemyObject")
             {
-                
-                //スタン経過時間初期化
-                time = 0.0f;
-                //点滅の次の時間を設定
-                FlashingNextTime = Time.time;
-                //歩くアニメーション停止
-                animator.SetFloat("Speed", 0.0f);
-                //スタンフラグTrue
-                bPlayerStun = true;
-            SpeedChange = false;
-            //ライフダウン
-            Life.GetComponent<PlayerLife>().PlayerLifeDown();
+
+            EnemyHit();
                 //Hitしたオブジェクトの削除
                 Destroy(col.gameObject);
             }
@@ -223,7 +229,30 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
 
+        if(hit.gameObject.tag == "EnemyObject")
+        {
+            EnemyHit();
+            Destroy(hit.gameObject);
+        }
+    }
+
+    public void EnemyHit()
+    {
+        //スタン経過時間初期化
+        time = 0.0f;
+        //点滅の次の時間を設定
+        FlashingNextTime = Time.time;
+        //歩くアニメーション停止
+        animator.SetFloat("Speed", 0.0f);
+        //スタンフラグTrue
+        bPlayerStun = true;
+        SpeedChange = false;
+        //ライフダウン
+        GameObject.Find("PlayerLife").GetComponent<PlayerLife>().PlayerLifeDown();
+    }
 
 
     public bool GetStunFlg()
@@ -233,41 +262,59 @@ public class PlayerController : MonoBehaviour {
 
     public void SpeedUp()
     {
-        if (PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_DEF)
+        if (Controller.isGrounded)
         {
-            TargetPos = new Vector3(5, transform.position.y, transform.position.z);
-            StartPos = transform.position;
-            StartTime = Time.time;
-            SpeedChange = true;
-            PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_MAX;
-        }
-        else if ( PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_MIN)
-        {
-            TargetPos = new Vector3(0, transform.position.y, transform.position.z);
-            StartPos = transform.position;
-            StartTime = Time.time;
-            SpeedChange = true;
-            PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_DEF;
+            if (!bPlayerStun)
+            {
+                if (!SpeedChange)
+                {
+                    if (PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_DEF)
+                    {
+                        TargetPos = new Vector3(5, transform.position.y, transform.position.z);
+                        StartPos = transform.position;
+                        StartTime = Time.time;
+                        SpeedChange = true;
+                        PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_MAX;
+                    }
+                    else if (PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_MIN)
+                    {
+                        TargetPos = new Vector3(0, transform.position.y, transform.position.z);
+                        StartPos = transform.position;
+                        StartTime = Time.time;
+                        SpeedChange = true;
+                        PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_DEF;
+                    }
+                }
+            }
         }
     }
 
     public void SpeedDown()
     {
-        if (PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_MAX)
+        if (Controller.isGrounded)
         {
-            TargetPos = new Vector3(0, transform.position.y, transform.position.z);
-            StartPos = transform.position;
-            StartTime = Time.time;
-            SpeedChange = true;
-            PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_DEF;
-        }
-        else if ( PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_DEF)
-        {
-            TargetPos = new Vector3(-5, transform.position.y, transform.position.z);
-            StartPos = transform.position;
-            StartTime = Time.time;
-            SpeedChange = true;
-            PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_MIN;
+            if (!bPlayerStun)
+            {
+                if (!SpeedChange)
+                {
+                    if (PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_MAX)
+                    {
+                        TargetPos = new Vector3(0, transform.position.y, transform.position.z);
+                        StartPos = transform.position;
+                        StartTime = Time.time;
+                        SpeedChange = true;
+                        PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_DEF;
+                    }
+                    else if (PlayerSpeedStatus == PLAYER_SPEED.PLAYER_SPEED_DEF)
+                    {
+                        TargetPos = new Vector3(-5, transform.position.y, transform.position.z);
+                        StartPos = transform.position;
+                        StartTime = Time.time;
+                        SpeedChange = true;
+                        PlayerSpeedStatus = PLAYER_SPEED.PLAYER_SPEED_MIN;
+                    }
+                }
+            }
         }
     }
 
@@ -275,7 +322,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (Controller.isGrounded)
         {
-            MoveP.y += JumpPower;
+            MoveP.y = JumpPower;
             animator.SetBool("Jump", true);
     
         }

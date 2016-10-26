@@ -12,7 +12,7 @@ public class GameSystem : MonoBehaviour {
     GameObject StageGenerater;
 
     bool fadestart;
-
+    bool set;
 	// Use this for initialization
 	void Start () {
         life = GameObject.Find("PlayerLife");
@@ -23,7 +23,7 @@ public class GameSystem : MonoBehaviour {
 
         Player = GameObject.Find("Player");
         Camera = GameObject.Find("Main Camera");
-
+        set = false;
 
     }
 	
@@ -33,8 +33,11 @@ public class GameSystem : MonoBehaviour {
         {
             if (life.GetComponent<PlayerLife>().GetPlayerDeathFlg())
             {
-                fadestart = true;
-                fade.GetComponent<Fade>().FadeStart();
+                if (set == false)
+                {
+                    Invoke("fstart", 3.0f);
+                    set = true;
+                }
             }
         }
 
@@ -49,6 +52,11 @@ public class GameSystem : MonoBehaviour {
 	
 	}
 
+    private void fstart()
+    {
+        fadestart = true;
+        fade.GetComponent<Fade>().FadeStart();
+    }
 
     public void PauseMenuContinue()
     {

@@ -17,11 +17,11 @@ public class hScore : MonoBehaviour {
 
         if(score.GetComponent<Score>().GetScoreValue() > hiscore)
         {
-            GetComponent<Text>().text = "HighScore:" + score.GetComponent<Score>().GetScoreValue().ToString("000000");
+            GetComponent<Text>().text = "HighScore:" + score.GetComponent<Score>().GetScoreValue();
         }
         else
         {
-            GetComponent<Text>().text = "HighScore:" + hiscore.ToString("000000");
+            GetComponent<Text>().text = "HighScore:" + hiscore;
         }
 	
 	}
